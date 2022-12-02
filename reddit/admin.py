@@ -1,3 +1,8 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import Comment, Post, Subreddit
+
+
+admin.site.register(Subreddit)
+admin.site.register(Post)
+admin.site.register(Comment)
