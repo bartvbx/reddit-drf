@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # third parties
-    "rest_framework",
+    'rest_framework',
     'rest_framework.authtoken',
     # local
     'reddit',

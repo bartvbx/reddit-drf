@@ -2,7 +2,7 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIV
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 from .models import Comment, Post, Subreddit
-from .serializers import CommentSerializer, PostSerializer, SubredditSerializer
+from .serializers import CommentSerializer, PostSerializer, SubredditSerializer, SubredditDetailSerializer, SubredditPostsSerializer
 
 
 class SubredditView(ListCreateAPIView):
@@ -12,8 +12,21 @@ class SubredditView(ListCreateAPIView):
 
 
 class SubredditDetailView(RetrieveUpdateDestroyAPIView):
-    serializer_class = SubredditSerializer
+    serializer_class = SubredditDetailSerializer
     queryset = Subreddit.objects.all()
+
+
+class SubredditPostsView(ListCreateAPIView):
+    serializer_class = SubredditPostsSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def get_queryset(self):
+        subreddit_posts = Post.objects.filter(subreddit=self.kwargs['pk'])
+        return subreddit_posts
+    
+    def perform_create(self, serializer):
+        subreddit = Subreddit.objects.filter(id=self.kwargs['pk']).first()
+        return serializer.save(author=self.request.user, subreddit=subreddit)
 
 
 class PostView(ListCreateAPIView):
@@ -32,7 +45,7 @@ class PostCommentsView(ListCreateAPIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
-        post_pk = self.kwargs["pk"]
+        post_pk = self.kwargs['pk']
         post_comments = Comment.objects.filter(post=post_pk)
         return post_comments
 

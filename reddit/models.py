@@ -3,8 +3,9 @@ from django.db import models
 
 
 class Subreddit(models.Model):
-    name = models.CharField(max_length=256, blank=False, null=False)
-    description = models.TextField(blank=True, null=True)
+    name = models.CharField(max_length=256, unique=True, blank=False, null=False)
+    description = models.TextField(max_length=512, blank=True, null=True)
+    owner = models.ForeignKey(User, on_delete=models.SET_NULL, blank=False, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
