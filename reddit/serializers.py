@@ -16,6 +16,12 @@ class SubredditDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subreddit
         fields = '__all__'
+        extra_kwargs = {
+            'name': {'required': False},
+            'description': {'required': False},
+            'owner': {'required': False},
+            'moderator': {'required': False},
+        }
 
 
 class SubredditPostsSerializer(serializers.ModelSerializer):
@@ -23,7 +29,10 @@ class SubredditPostsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = ['title', 'text', 'author']
-        extra_kwargs = {'author': {'required': False}, 'subreddit': {'required': False}}
+        extra_kwargs = {
+            'author': {'required': False},
+            'subreddit': {'required': False}
+        }
 
 
 class PostSerializer(serializers.ModelSerializer):
