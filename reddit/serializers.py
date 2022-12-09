@@ -20,7 +20,7 @@ class SubredditDetailSerializer(serializers.ModelSerializer):
             'name': {'required': False},
             'description': {'required': False},
             'owner': {'required': False},
-            'moderator': {'required': False},
+            'moderator': {'required': False, "allow_null": True},
         }
 
 
@@ -36,11 +36,26 @@ class SubredditPostsSerializer(serializers.ModelSerializer):
 
 
 class PostSerializer(serializers.ModelSerializer):
-    author = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
+    class Meta:
+        model = Post
+        fields = ['id', 'title', 'text', 'subreddit', 'author']
+        extra_kwargs = {
+            'author': {'required': False},
+        }
+
+
+class PostDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
         fields = '__all__'
+        extra_kwargs = {
+            'title': {'required': False},
+            'text': {'required': False},
+            'subreddit': {'required': False},
+            'author': {'required': False},
+        }
 
 
 class CommentSerializer(serializers.ModelSerializer):
