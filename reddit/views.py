@@ -2,12 +2,17 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIV
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 from .models import Comment, Post, Subreddit
-from .permissions import IsAuthorOrReadOnly, IsOwnerOrReadOnly, SubredditModeratorPostPermission, SuperUserPermission
+from .permissions import (
+    IsAuthorOrReadOnly,
+    IsOwnerOrReadOnly,
+    SubredditOwnerModeratorPostPermission,
+    SuperUserPermission
+    )
 from .serializers import (
     CommentSerializer,
     PostSerializer, PostDetailSerializer,
     SubredditSerializer, SubredditDetailSerializer, SubredditPostsSerializer
-)
+    )
 
 
 class SubredditView(ListCreateAPIView):
@@ -46,7 +51,7 @@ class PostView(ListCreateAPIView):
 
 class PostDetailView(RetrieveUpdateDestroyAPIView):
     serializer_class = PostDetailSerializer
-    permission_classes = [IsAuthorOrReadOnly|SubredditModeratorPostPermission|SuperUserPermission]
+    permission_classes = [IsAuthorOrReadOnly|SubredditOwnerModeratorPostPermission|SuperUserPermission]
     queryset = Post.objects.all()
 
 
