@@ -53,3 +53,22 @@ class SubredditOwnerModeratorPostPermission(permissions.BasePermission):
             return True
         
         return False
+
+
+class SubredditOwnerModeratorCommentPermission(permissions.BasePermission):
+    """
+    Object-level permission to only allow related subreddit owner and moderators to edit the object.
+    Assumes the model instance has an `post` attribute.
+    """
+
+    def has_object_permission(self, request, view, obj):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+
+        if request.user == obj.post.subreddit.owner:
+            return True
+
+        if request.user in obj.post.subreddit.moderator.all():
+            return True
+        
+        return False

@@ -5,12 +5,13 @@ from .models import Comment, Post, Subreddit
 from .permissions import (
     IsAuthorOrReadOnly,
     IsOwnerOrReadOnly,
+    SubredditOwnerModeratorCommentPermission,
     SubredditOwnerModeratorPostPermission,
     SuperUserPermission
     )
 from .serializers import (
-    CommentSerializer,
-    PostSerializer, PostDetailSerializer,
+    CommentDetailSerializer,
+    PostSerializer, PostDetailSerializer, PostCommentsSerializer,
     SubredditSerializer, SubredditDetailSerializer, SubredditPostsSerializer
     )
 
@@ -56,7 +57,7 @@ class PostDetailView(RetrieveUpdateDestroyAPIView):
 
 
 class PostCommentsView(ListCreateAPIView):
-    serializer_class = CommentSerializer
+    serializer_class = PostCommentsSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
@@ -64,8 +65,12 @@ class PostCommentsView(ListCreateAPIView):
         post_comments = Comment.objects.filter(post=post_pk)
         return post_comments
 
+    def perform_create(self, serializer):
+        post = Post.objects.filter(id=self.kwargs['pk']).first()
+        return serializer.save(author=self.request.user, post=post)
+
 
 class CommentDetailView(RetrieveUpdateDestroyAPIView):
-    serializer_class = CommentSerializer
-    permission_classes = [IsAuthorOrReadOnly|SuperUserPermission]
+    serializer_class = CommentDetailSerializer
+    permission_classes = [IsAuthorOrReadOnly|SubredditOwnerModeratorCommentPermission|SuperUserPermission]
     queryset = Comment.objects.all()
